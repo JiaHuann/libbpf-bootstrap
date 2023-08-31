@@ -24,7 +24,7 @@ INCLUDES := -I$(OUTPUT) -I../../libbpf/include/uapi -I$(dir $(VMLINUX)) -I$(LIBB
 CFLAGS := -g -Wall
 ALL_LDFLAGS := $(LDFLAGS) $(EXTRA_LDFLAGS)
 
-APPS = minimal minimal_legacy bootstrap uprobe kprobe fentry usdt sockfilter tc ksyscall
+APPS = 
 
 CARGO ?= $(shell which cargo)
 ifeq ($(strip $(CARGO)),)
@@ -83,6 +83,7 @@ $(OUTPUT) $(OUTPUT)/libbpf $(BPFTOOL_OUTPUT):
 # Build libbpf
 $(LIBBPF_OBJ): $(wildcard $(LIBBPF_SRC)/*.[ch] $(LIBBPF_SRC)/Makefile) | $(OUTPUT)/libbpf
 	$(call msg,LIB,$@)
+	$(Q)cp -r bpf $(OUTPUT)/
 	$(Q)$(MAKE) -C $(LIBBPF_SRC) BUILD_STATIC_ONLY=1		      \
 		    OBJDIR=$(dir $@)/libbpf DESTDIR=$(dir $@)		      \
 		    INCLUDEDIR= LIBDIR= UAPIDIR=			      \
@@ -135,3 +136,4 @@ $(APPS): %: $(OUTPUT)/%.o $(LIBBPF_OBJ) | $(OUTPUT)
 
 # keep intermediate (.skel.h, .bpf.o, etc) targets
 .SECONDARY:
+
